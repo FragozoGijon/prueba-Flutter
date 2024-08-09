@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:prueba/componentes/titulo.dart';
 
-import '../componentes/RoundedButton.dart';
-import 'EliminarCategoria.dart';
+import 'AgregarArticulo.dart';
+import 'AgregarCategoria.dart';
 import 'ListaCategorias.dart';
 import 'ListaProductos.dart';
 
@@ -44,7 +44,6 @@ class _HomePageState extends State<HomePage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ScreamCategorias()));
-                          //LoginScreen()));
                         },
                         borderRadius: BorderRadius.circular(80),
                         child: Container(
@@ -62,9 +61,7 @@ class _HomePageState extends State<HomePage> {
                                 style: GoogleFonts.openSans(
                                     textStyle: TextStyle(
                                         fontSize: 18,
-                                        fontWeight: FontWeight.bold))
-                                //,
-                                ),
+                                        fontWeight: FontWeight.bold))),
                           ),
                         ),
                       ),
@@ -75,13 +72,12 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.only(top: 80),
                       //boton
                       child: InkWell(
-                        //eso es el boton
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ScreamCategorias()));
-                          //LoginScreen()));
+                                  builder: (context) =>
+                                      ScreamAgregarCategoria()));
                         },
                         borderRadius: BorderRadius.circular(80),
                         child: Container(
@@ -107,41 +103,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ],
-                ),
-                Container(
-                  alignment: AlignmentDirectional.center,
-                  padding: const EdgeInsets.only(top: 80),
-                  //boton
-                  child: InkWell(
-                    //eso es el boton
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Vista_ElminarCategoria()));
-                      //LoginScreen()));
-                    },
-                    borderRadius: BorderRadius.circular(80),
-                    child: Container(
-                      width: size.width * 0.5,
-                      decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Color(0xffD3D3D3), width: 2),
-                          borderRadius: BorderRadius.circular(20.0),
-                          color: Color.fromARGB(255, 169, 228, 113)),
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      alignment: Alignment.center,
-                      child: FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text('Eliminar',
-                            style: GoogleFonts.openSans(
-                                textStyle: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold))
-                            //,
-                            ),
-                      ),
-                    ),
-                  ),
                 ),
                 const SizedBox(height: 50),
                 Titulo('Articulos', Colors.black, 50),
@@ -191,13 +152,12 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.only(top: 80),
                       //boton
                       child: InkWell(
-                        //eso es el boton
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ScreamArticulos()));
-                          //LoginScreen()));
+                                  builder: (context) =>
+                                      ScreamAgregarArticulo()));
                         },
                         borderRadius: BorderRadius.circular(80),
                         child: Container(
@@ -215,49 +175,12 @@ class _HomePageState extends State<HomePage> {
                                 style: GoogleFonts.openSans(
                                     textStyle: TextStyle(
                                         fontSize: 18,
-                                        fontWeight: FontWeight.bold))
-                                //,
-                                ),
+                                        fontWeight: FontWeight.bold))),
                           ),
                         ),
                       ),
                     ),
                   ],
-                ),
-                Container(
-                  alignment: AlignmentDirectional.center,
-                  padding: const EdgeInsets.only(top: 80),
-                  //boton
-                  child: InkWell(
-                    //eso es el boton
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Vista_ElminarCategoria()));
-                      //LoginScreen()));
-                    },
-                    borderRadius: BorderRadius.circular(80),
-                    child: Container(
-                      width: size.width * 0.5,
-                      decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Color(0xffD3D3D3), width: 2),
-                          borderRadius: BorderRadius.circular(20.0),
-                          color: Color.fromARGB(255, 169, 228, 113)),
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      alignment: Alignment.center,
-                      child: FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text('Eliminar',
-                            style: GoogleFonts.openSans(
-                                textStyle: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold))
-                            //,
-                            ),
-                      ),
-                    ),
-                  ),
                 ),
               ]),
         ),
