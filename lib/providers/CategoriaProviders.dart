@@ -34,13 +34,27 @@ class CategoriaProviders extends ChangeNotifier {
     return categoria;
   }
 
-  // función asíncrona que no devuelve ningún valor.
+  Future<void> agregarCategoria(Map<String, dynamic> jsonData) async {
+    await service.agregarCategoria(jsonData); // Pasamos el JSON al servicio
+    // Aquí podrías agregar lógica adicional si lo deseas.
+  }
+
   Future<void> eliminarElemento(int id) async {
-    // Llama a un servicio asíncrono que elimina una categoría usando su ID.
     await service.eliminarCategoria(id);
-    // Elimina el elemento de la lista local `categoria` donde la ID coincide con la proporcionada.
     categoria.removeWhere((item) => item.id == id);
-    // Notifica a los listeners que la lista ha cambiado, lo que actualizará automáticamente la interfaz de usuario.
-    notifyListeners();
+    notifyListeners(); // Actualiza la lista automáticamente
+  }
+
+  Future<void> actualizarCategoria(
+      int id, Map<String, dynamic> jsonData) async {
+    await service.actualizarCategoria(id, jsonData);
+
+    // Actualiza la categoría en la lista local
+    final index = categoria.indexWhere((item) => item.id == id);
+    if (index != -1) {
+      categoria[index] =
+          Datum.fromJson(jsonData); // Reemplaza el elemento actualizado
+      notifyListeners(); // Notifica a los listeners sobre el cambio
+    }
   }
 }

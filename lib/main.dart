@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'Scream/Home.dart';
-import 'Scream/ListaProductos.dart';
+
 import 'providers/ArticulosProviders.dart';
 import 'providers/CategoriaProviders.dart';
 

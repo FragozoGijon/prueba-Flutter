@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:prueba/Model/ArticuloModel.dart';
 
 class ArtioculoServices {
-  Future<List<Articulo>> obtenerTodos() async {
+  Future<List<Datum>> obtenerTodos() async {
     print("hace consulta");
     http.Response response = await http.get(
       Uri.parse('https://basic2.visorus.com.mx/articulo'),
@@ -12,10 +12,10 @@ class ArtioculoServices {
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
-      List<Articulo> lst = [];
+      List<Datum> lst = [];
       for (var item in decoded["data"]) {
-        Articulo articulo = Articulo.fromJson(item);
-        lst.add(articulo);
+        Datum datum = Datum.fromJson(item);
+        lst.add(datum);
       }
       print(lst.length);
       return lst;
@@ -23,27 +23,48 @@ class ArtioculoServices {
     return [];
   }
 
-  Future<void> eliminarArticulo(String clave) async {
+  Future<void> eliminarCategoria(int id) async {
     http.Response response = await http.delete(
-      Uri.parse('https://basic2.visorus.com.mx/articulo/$clave'),
+      Uri.parse('https://basic2.visorus.com.mx/categoria/$id'),
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Error al eliminar el articulo');
+      throw Exception('Error al eliminar la categoría');
     }
-    print("eliminado");
+    print("elimado");
   }
 
-  Future<void> agregarArticulo(Articulo articulo) async {
-    http.Response response = await http.post(
+  Future<void> agregarAr(Map<String, dynamic> categoria) async {
+    final response = await http.post(
       Uri.parse('https://basic2.visorus.com.mx/articulo'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(articulo.toJson()),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(categoria), // Convertimos el mapa a JSON string
     );
 
-    if (response.statusCode != 201) {
-      throw Exception('Error al agregar el articulo');
+    // Imprimir el código de estado y el cuerpo de la respuesta
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      print("Categoría agregada exitosamente");
+    } else {
+      // Lanzar excepción con detalles de la respuesta
+      throw Exception('Error al agregar la categoría: ${response.body}');
     }
-    print("agregado");
+  }
+
+  Future<void> actualizarArticulo(
+      int id, Map<String, dynamic> categoria) async {
+    final response = await http.put(
+      Uri.parse('https://basic2.visorus.com.mx/articulo/$id'),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(categoria),
+    );
+
+    if (response.statusCode == 200) {
+      print("Categoría actualizada exitosamente");
+    } else {
+      throw Exception('Error al actualizar la categoría');
+    }
   }
 }

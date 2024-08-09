@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:prueba/providers/CategoriaProviders.dart';
-
+import '../Model/CategoriaModel.dart';
+import '../providers/CategoriaProviders.dart';
 import '../componentes/RoundedInput.dart';
 
-class ScreamAgregarCategoria extends StatefulWidget {
+class ScreamEditarCategoria extends StatefulWidget {
+  final Datum categoria;
+  final VoidCallback onCategoriaActualizada; // Callback agregado
+
+  ScreamEditarCategoria(
+      {required this.categoria,
+      required this.onCategoriaActualizada}); // Constructor modificado
+
   @override
-  _ScreamAgregarCategoriaState createState() => _ScreamAgregarCategoriaState();
+  _ScreamEditarCategoriaState createState() => _ScreamEditarCategoriaState();
 }
 
-class _ScreamAgregarCategoriaState extends State<ScreamAgregarCategoria> {
-  final TextEditingController _claveController = TextEditingController();
-  final TextEditingController _nombreController = TextEditingController();
-  final TextEditingController _fechaCreadoController = TextEditingController();
+class _ScreamEditarCategoriaState extends State<ScreamEditarCategoria> {
+  late TextEditingController _claveController;
+  late TextEditingController _nombreController;
+  late TextEditingController _fechaCreadoController;
+
+  @override
+  void initState() {
+    super.initState();
+    _claveController = TextEditingController(text: widget.categoria.clave);
+    _nombreController = TextEditingController(text: widget.categoria.nombre);
+
+    _fechaCreadoController =
+        TextEditingController(text: widget.categoria.fechaCreado.toString());
+  }
 
   @override
   void dispose() {
@@ -44,7 +60,7 @@ class _ScreamAgregarCategoriaState extends State<ScreamAgregarCategoria> {
         toolbarHeight: 80,
         elevation: 0,
         title: Text(
-          "Formulario de Categoria",
+          "Editar Categoría",
           style: TextStyle(
               color: Color.fromARGB(255, 169, 228, 113), fontSize: 20),
         ),
@@ -64,23 +80,23 @@ class _ScreamAgregarCategoriaState extends State<ScreamAgregarCategoria> {
             icon: Icons.vpn_key,
             hint: "Clave",
             colorR: Colors.white,
-            controller: _claveController, // Asignar el controlador aquí
+            controller: _claveController,
           ),
           RoundedInput(
             icon: Icons.text_fields,
             hint: "Nombre",
             colorR: Colors.white,
-            controller: _nombreController, // Asignar el controlador aquí
+            controller: _nombreController,
           ),
           RoundedInput(
             icon: Icons.date_range,
             hint: "Fecha Creación",
             colorR: Colors.white,
-            controller: _fechaCreadoController, // Asignar el controlador aquí
+            controller: _fechaCreadoController,
           ),
           Spacer(),
           InkWell(
-            onTap: () => _agregarElemento(context),
+            onTap: () => _editarElemento(context),
             borderRadius: BorderRadius.circular(80),
             child: Container(
               width: 200,
@@ -94,12 +110,10 @@ class _ScreamAgregarCategoriaState extends State<ScreamAgregarCategoria> {
               child: FittedBox(
                 fit: BoxFit.contain,
                 child: Text(
-                  'Agregar',
-                  style: GoogleFonts.openSans(
-                    textStyle: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  'Guardar Cambios',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -110,32 +124,36 @@ class _ScreamAgregarCategoriaState extends State<ScreamAgregarCategoria> {
     );
   }
 
-  void _agregarElemento(BuildContext context) async {
+  void _editarElemento(BuildContext context) async {
     final categoriaProvider =
         Provider.of<CategoriaProviders>(context, listen: false);
 
     try {
-      // Crea el JSON directamente
       final Map<String, dynamic> jsonData = {
+        "id": widget.categoria.id,
         "clave": _claveController.text,
         "nombre": _nombreController.text,
         "fechaCreado": int.parse(_fechaCreadoController.text),
-        /*  "activo": true,
-        "version": 1,
-        "categoria": null, // Asumiendo que no tiene categoría padre
-        "categorias": [], // Asumiendo que no tiene subcategorías
-        */
+        "activo": widget.categoria.activo,
+        "version": widget.categoria.version,
+        "categoria": widget.categoria.categoria,
+        "categorias": widget.categoria.categorias,
       };
 
-      // Llama al método de agregar categoría pasándole el JSON directamente
-      await categoriaProvider.agregarCategoria(jsonData);
+      await categoriaProvider.actualizarCategoria(
+          widget.categoria.id, jsonData);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Categoría agregada exitosamente')),
+        SnackBar(content: Text('Categoría actualizada exitosamente')),
       );
+
+      widget.onCategoriaActualizada(); // Llama al callback
+
+      Navigator.pop(
+          context); // Regresa a la lista de categorías después de editar
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al agregar la categoría: $e')),
+        SnackBar(content: Text('Error al actualizar la categoría: $e')),
       );
     }
   }

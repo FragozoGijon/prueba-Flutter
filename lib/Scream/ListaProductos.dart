@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../Model/ArticuloModel.dart';
 import '../providers/ArticulosProviders.dart';
 
@@ -31,18 +32,6 @@ class _ScreamArticulosState extends State<ScreamArticulos> {
         title: Text("Lista De Artículos",
             style: TextStyle(
                 color: Color.fromARGB(255, 169, 228, 113), fontSize: 20)),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              final articulosProvider =
-                  Provider.of<ArticulosProviders>(context, listen: false);
-              articulosProvider
-                  .toggleDataMode(); // Alterna entre datos reales y de muestra
-              articulosProvider.refreshArticulos(); // Refresca la lista
-            },
-          ),
-        ],
       ),
       body: _body(),
     );
@@ -65,7 +54,7 @@ class _ScreamArticulosState extends State<ScreamArticulos> {
 
     return FutureBuilder(
       future: articulosProvider.obtenerArticulos(),
-      builder: (_, AsyncSnapshot<List<Articulo>> snapshot) {
+      builder: (_, AsyncSnapshot<List<Datum>> snapshot) {
         if (articulosProvider.isLoading) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -84,7 +73,7 @@ class _ScreamArticulosState extends State<ScreamArticulos> {
     );
   }
 
-  Widget _card(Articulo articulo) {
+  Widget _card(Datum articulo) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -96,27 +85,46 @@ class _ScreamArticulosState extends State<ScreamArticulos> {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Clave: ${articulo.clave}',
+                Text('ID: ${articulo.id}',
                     style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                Text('Versión: ${articulo.version}'),
+                SizedBox(height: 8),
+                Text('Clave: ${articulo.clave}'),
                 SizedBox(height: 8),
                 Text('Nombre: ${articulo.nombre}'),
                 SizedBox(height: 8),
-                Text('Categoría: ${articulo.categoria}'),
+                Text('Activo: ${articulo.activo ? 'Sí' : 'No'}'),
+                SizedBox(height: 8),
+                Text('Categoría: ${articulo.categoria.nombre}'),
                 SizedBox(height: 8),
                 Text(
-                    'Precios: ${articulo.precios.map((p) => p.precio).join(', ')}'),
+                    'Fecha Creación: ${DateTime.fromMillisecondsSinceEpoch(articulo.categoria.fechaCreado).toLocal()}'),
                 SizedBox(height: 8),
-                Text('Activo: ${articulo.activo ? 'Sí' : 'No'}'),
+                Text('Precios:'),
+                ...articulo.precios
+                    .map((precio) => Text(
+                        ' - Precio ID: ${precio.id}, Valor: ${precio.precio}'))
+                    .toList(),
                 SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
+                      icon: Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        // Implementar la funcionalidad para editar el artículo
+                      },
+                    ),
+                    IconButton(
                       icon: Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
-                        _mostrarDialogoConfirmacion(context, articulo.clave);
+                        _mostrarDialogoConfirmacion(
+                            context,
+                            articulo
+                                .id); // Asegúrate de pasar el id del artículo
                       },
                     ),
                   ],
@@ -129,11 +137,7 @@ class _ScreamArticulosState extends State<ScreamArticulos> {
     );
   }
 
-  void _guardarElementoParaEditar(Articulo articulo) {
-    print("Elemento para editar: ${articulo.nombre}");
-  }
-
-  void _mostrarDialogoConfirmacion(BuildContext context, String clave) {
+  void _mostrarDialogoConfirmacion(BuildContext context, int id) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -150,7 +154,7 @@ class _ScreamArticulosState extends State<ScreamArticulos> {
             TextButton(
               child: Text("Eliminar"),
               onPressed: () {
-                _eliminarElemento(context, clave);
+                _eliminarElemento(context, id); // Pasa el id
                 Navigator.of(context)
                     .pop(); // Cierra el diálogo después de eliminar
               },
@@ -161,11 +165,11 @@ class _ScreamArticulosState extends State<ScreamArticulos> {
     );
   }
 
-  void _eliminarElemento(BuildContext context, String clave) async {
+  void _eliminarElemento(BuildContext context, int id) async {
     final articulosProvider =
         Provider.of<ArticulosProviders>(context, listen: false);
     try {
-      await articulosProvider.eliminarElemento(clave);
+      await articulosProvider.eliminarElemento(id); // Elimina basado en el id
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Artículo eliminado con éxito')),
       );

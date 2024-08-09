@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../Model/ArticuloModel.dart';
-import '../componentes/InputContainer.dart';
-import '../componentes/RoundedButton.dart';
+
 import '../componentes/RoundedInput.dart';
 import '../providers/ArticulosProviders.dart';
 
@@ -69,26 +68,31 @@ class _ScreamAgregarArticuloState extends State<ScreamAgregarArticulo> {
             icon: Icons.vpn_key,
             hint: "Clave",
             colorR: Colors.white,
+            controller: _claveController,
           ),
           RoundedInput(
             icon: Icons.category,
             hint: "Categoría",
             colorR: Colors.white,
+            controller: _categoriaController,
           ),
           RoundedInput(
             icon: Icons.text_fields,
             hint: "Nombre",
             colorR: Colors.white,
+            controller: _nombreController,
           ),
           RoundedInput(
             icon: Icons.monetization_on,
             hint: "Precios",
             colorR: Colors.white,
+            controller: _preciosController,
           ),
           RoundedInput(
             icon: Icons.check_circle,
             hint: "Activo",
             colorR: Colors.white,
+            controller: _activoController,
           ),
           Spacer(),
           InkWell(
@@ -127,7 +131,7 @@ class _ScreamAgregarArticuloState extends State<ScreamAgregarArticulo> {
         Provider.of<ArticulosProviders>(context, listen: false);
 
     try {
-      final List<Precio> precios = _preciosController.text
+      /*  final List<Precio> precios = _preciosController.text
           .split(',')
           .map((precioStr) => Precio(precio: int.parse(precioStr.trim())))
           .toList();
@@ -140,7 +144,7 @@ class _ScreamAgregarArticuloState extends State<ScreamAgregarArticulo> {
         activo: _activoController.text.toLowerCase() == 'true',
       );
 
-      articulosProvider.agregarElemento(newArticulo);
+      articulosProvider.agregarElemento(newArticulo);*/
     } catch (e) {
       // Manejo de errores
       print('Error al agregar el artículo: $e');

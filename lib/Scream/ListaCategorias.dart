@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:prueba/Scream/EditarCategoria.dart';
 
 import '../Model/CategoriaModel.dart';
 import '../componentes/titulo.dart';
@@ -14,26 +15,27 @@ class _ScreamCategoriasState extends State<ScreamCategorias> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          leading: IconButton(
-            color: Color(0xffD3D3D3),
-            iconSize: 25,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Color.fromARGB(255, 169, 228, 113),
-            ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        leading: IconButton(
+          color: Color(0xffD3D3D3),
+          iconSize: 25,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromARGB(255, 169, 228, 113),
           ),
-          backgroundColor: Colors.transparent,
-          toolbarHeight: 80,
-          elevation: 0,
-          title: Titulo(
-              "Lista De Categorias", Color.fromARGB(255, 169, 228, 113), 20),
         ),
-        body: _body());
+        backgroundColor: Colors.transparent,
+        toolbarHeight: 80,
+        elevation: 0,
+        title: Titulo(
+            "Lista De Categorias", Color.fromARGB(255, 169, 228, 113), 20),
+      ),
+      body: _body(),
+    );
   }
 
   Widget _body() {
@@ -84,12 +86,11 @@ class _ScreamCategoriasState extends State<ScreamCategorias> {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment
-                  .center, // Centra el contenido horizontalmente
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text('ID: ${categoria.id}',
                     style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 8), // Añade espacio entre las líneas
+                SizedBox(height: 8),
                 Text('Versión: ${categoria.version}'),
                 SizedBox(height: 8),
                 Text('Clave: ${categoria.clave}'),
@@ -105,11 +106,31 @@ class _ScreamCategoriasState extends State<ScreamCategorias> {
                     'Subcategorías: ${categoria.categorias.isNotEmpty ? categoria.categorias.join(', ') : 'N/A'}'),
                 SizedBox(height: 8),
                 Text('Activo: ${categoria.activo ? 'Sí' : 'No'}'),
-                SizedBox(height: 16), // Añade un espacio extra antes del botón
+                SizedBox(height: 16),
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.end, // Alinea los íconos a la derecha
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ScreamEditarCategoria(
+                              categoria: categoria,
+                              onCategoriaActualizada: () {
+                                setState(() {
+                                  // Llama a refreshArticulos para actualizar la lista
+                                  Provider.of<CategoriaProviders>(context,
+                                          listen: false)
+                                      .refreshArticulos();
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     IconButton(
                       icon: Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
@@ -124,10 +145,6 @@ class _ScreamCategoriasState extends State<ScreamCategorias> {
         ),
       ),
     );
-  }
-
-  void _guardarElementoParaEditar(Datum categoria) {
-    print("Elemento para editar: ${categoria.nombre}");
   }
 
   void _mostrarDialogoConfirmacion(BuildContext context, Datum categoria) {

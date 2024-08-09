@@ -34,17 +34,37 @@ class CategoriaServices {
     print("elimado");
   }
 
-  Future<Datum> agregarCategoria(Datum categoria) async {
-    http.Response response = await http.post(
+  Future<void> agregarCategoria(Map<String, dynamic> categoria) async {
+    final response = await http.post(
       Uri.parse('https://basic2.visorus.com.mx/categoria'),
       headers: {"Content-Type": "application/json"},
-      body: categoria,
+      body: json.encode(categoria), // Convertimos el mapa a JSON string
     );
-    if (response.statusCode == 201) {
-      final decoded = json.decode(response.body);
-      return Datum.fromJson(decoded);
+
+    // Imprimir el código de estado y el cuerpo de la respuesta
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      print("Categoría agregada exitosamente");
     } else {
-      throw Exception('Error al agregar la categoría');
+      // Lanzar excepción con detalles de la respuesta
+      throw Exception('Error al agregar la categoría: ${response.body}');
+    }
+  }
+
+  Future<void> actualizarCategoria(
+      int id, Map<String, dynamic> categoria) async {
+    final response = await http.put(
+      Uri.parse('https://basic2.visorus.com.mx/categoria/$id'),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(categoria),
+    );
+
+    if (response.statusCode == 200) {
+      print("Categoría actualizada exitosamente");
+    } else {
+      throw Exception('Error al actualizar la categoría');
     }
   }
 }
